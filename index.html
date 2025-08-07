@@ -118,12 +118,9 @@
     (role === 'teacher' && user === 'teacher' && pass === '5678')
   ) {
     localStorage.setItem('userRole', role);
-    alert(`Logged in as ${role}!`);
-    if (role === 'student') {
-      window.location.href = 'student.html';
-    } else {
-      window.location.href = 'teacher.html';
-    }
+    // Use window.location.replace for better navigation
+    const targetPage = role === 'student' ? 'student.html' : 'teacher.html';
+    window.location.replace(targetPage);
   } else {
     err.textContent = 'Invalid username or password.';
   }
