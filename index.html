@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF‑8" />
+  <meta name="viewport" content="width=device‑width, initial‑scale=1.0"/>
   <title>Smart Syllabus Tracker</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
     body {
-      font-family: "Segoe UI", sans-serif;
+      font-family: 'Poppins', sans‑serif;
       background: linear-gradient(135deg, #c3ecf7, #f5f7fa);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      margin: 0; padding: 0;
+      display: flex; justify-content: center; align-items: center;
       height: 100vh;
     }
-
     .container {
       background: white;
       padding: 40px;
@@ -23,93 +20,115 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       width: 350px;
       text-align: center;
+      position: relative;
+      transition: transform 0.5s;
     }
-
-    h1 {
-      margin-bottom: 20px;
-      font-size: 24px;
-      color: #333;
+    .container.student {
+      transform: rotateY(0deg);
     }
-
+    .container.teacher {
+      transform: rotateY(0deg);
+    }
+    h1 { margin-bottom: 20px; color: #333; }
     select, input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      width: 100%; padding: 12px; margin: 10px 0;
+      border: 1px solid #ccc; border-radius: 8px;
       font-size: 16px;
+      transition: border-color 0.3s;
     }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #007BFF;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
+    select:focus, input:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
+    .input-group {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
       cursor: pointer;
-      margin-top: 10px;
+      font-size: 16px; color: #888;
     }
-
+    button {
+      width: 100%; padding: 12px;
+      background-color: #007BFF; color: white;
+      font-size: 16px; border: none;
+      border-radius: 8px; cursor: pointer;
+      transition: background-color 0.3s;
+    }
     button:hover {
       background-color: #0056b3;
     }
-
-    .error {
-      color: red;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-
-    .footer {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #666;
-    }
+    .error { color: red; margin-top: 10px; font-size: 14px; height: 18px; }
   </style>
 </head>
 <body>
-
-  <div class="container">
+  <div class="container student" id="formContainer">
     <h1>Smart Syllabus Progress Tracker</h1>
-
     <select id="role">
       <option value="student">Student</option>
       <option value="teacher">Teacher</option>
     </select>
+    <input type="text" id="username" placeholder="Username" required />
+    <div class="input-group">
+      <input type="password" id="password" placeholder="Password" required />
+      <span class="toggle-password" id="togglePassword">Show</span>
+    </div>
+<button id="btnLogin">Login</button>
+<div class="error" id="errorMsg"></div>
+<div class="footer">
+  Demo login: <br>
+  Student: student / 1234 <br>
+  Teacher: teacher / 5678
+</div>
 
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
 
-    <button onclick="login()">Login</button>
-    <div class="error" id="errorMsg"></div>
-
-    <div class="footer">Demo login: <br> Student: student / 1234 <br> Teacher: teacher / 5678</div>
   </div>
 
   <script>
-    function login() {
-      const role = document.getElementById("role").value;
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const errorMsg = document.getElementById("errorMsg");
+    const roleSelect = document.getElementById('role');
+    const container = document.getElementById('formContainer');
+    roleSelect.addEventListener('change', () => {
+      container.classList.toggle('teacher', roleSelect.value === 'teacher');
+      container.classList.toggle('student', roleSelect.value === 'student');
+    });
 
-      if (!username || !password) {
-        errorMsg.textContent = "Please fill in all fields.";
-        return;
-      }
+    const toggleBtn = document.getElementById('togglePassword');
+    const pwdInput = document.getElementById('password');
+    toggleBtn.addEventListener('click', () => {
+      const type = pwdInput.type === 'password' ? 'text' : 'password';
+      pwdInput.type = type;
+      toggleBtn.textContent = type === 'password' ? 'Show' : 'Hide';
+    });
 
-      // Simple demo logic
-      if (role === "student" && username === "student" && password === "1234") {
-        window.location.href = "student.html";
-      } else if (role === "teacher" && username === "teacher" && password === "5678") {
-        window.location.href = "teacher.html";
-      } else {
-        errorMsg.textContent = "Invalid username or password.";
-      }
+    document.getElementById('btnLogin').addEventListener('click', () => {
+  const role = roleSelect.value;
+  const user = document.getElementById('username').value.trim();
+  const pass = pwdInput.value.trim();
+  const err = document.getElementById('errorMsg');
+  err.textContent = '';
+
+  if (!user || !pass) {
+    err.textContent = 'Please fill in all fields.';
+    return;
+  }
+
+  if (
+    (role === 'student' && user === 'student' && pass === '1234') ||
+    (role === 'teacher' && user === 'teacher' && pass === '5678')
+  ) {
+    localStorage.setItem('userRole', role);
+    alert(`Logged in as ${role}!`);
+    if (role === 'student') {
+      window.location.href = 'student.html';
+    } else {
+      window.location.href = 'teacher.html';
     }
-  </script>
+  } else {
+    err.textContent = 'Invalid username or password.';
+  }
+});
 
+  </script>
 </body>
 </html>

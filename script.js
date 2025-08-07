@@ -46,6 +46,11 @@ function updateProgress() {
   progressBar.value = percent;
   progressText.textContent = `${percent}%`;
 }
+function saveProgress() {
+  alert("Progress saved successfully!");
+  // Since teacher checkboxes already update localStorage in real-time,
+  // this is mostly for user feedback.
+}
 
 updateProgress();
 function login() {

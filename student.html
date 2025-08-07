@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  <script>
+    if (localStorage.getItem("userRole") !== "student") {
+      window.location.href = "index.html";
+    }
+  </script>
+
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    select, label {
+      display: block;
+      width: 100%;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .topic {
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .topic input {
+      margin-right: 10px;
+    }
+
+    canvas {
+      max-width: 100%;
+      margin-top: 30px;
+    }
+
+    .buttons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .reset {
+      background: #dc3545;
+    }
+
+    .reset:hover {
+      background: #b02a37;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Welcome, Student 👩‍🎓</h2>
+
+  <label for="subject">Select Subject:</label>
+  <select id="subject" onchange="loadTopics()">
+    <option value="dsa">Data Structures</option>
+    <option value="os">Operating Systems</option>
+    <option value="math">Mathematics</option>
+  </select>
+
+  <div id="topicList"></div>
+
+ <div class="buttons">
+  <button onclick="window.location.href='index.html'">← Back</button>
+  <button onclick="saveMyProgress()">💾 Save</button>
+  <button class="reset" onclick="resetMyProgress()">Reset My Progress</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+  <canvas id="studentChart" width="400" height="400"></canvas>
+</div>
+
+<script>
+  const syllabus = {
+    math: [
+      "Sets and Relations",
+      "Matrices and Determinants",
+      "Probability and Statistics",
+      "Calculus",
+      "Linear Algebra"
+    ],
+    dsa: [
+      "Arrays and Strings",
+      "Linked Lists",
+      "Stacks and Queues",
+      "Trees and Graphs",
+      "Sorting and Searching",
+      "Hashing"
+    ],
+    os: [
+      "Introduction to OS",
+      "Process Management",
+      "CPU Scheduling",
+      "Memory Management",
+      "File Systems",
+      "Deadlocks"
+    ]
+  };
+
+  let chart;
+
+  function loadTopics() {
+    const subject = document.getElementById("subject").value;
+    const topics = syllabus[subject];
+    const topicList = document.getElementById("topicList");
+    topicList.innerHTML = "";
+
+    const globalProgress = JSON.parse(localStorage.getItem("globalProgress")) || {};
+    const available = globalProgress[subject] || Array(topics.length).fill(false);
+
+    let studentCompleted = 0;
+    let availableCount = 0;
+
+    topics.forEach((topic, index) => {
+      if (!available[index]) return; // topic not covered by teacher
+
+      availableCount++;
+
+      const studentKey = `student_${subject}_${index}`;
+      const done = localStorage.getItem(studentKey) === "true";
+
+      if (done) studentCompleted++;
+
+      const div = document.createElement("div");
+      div.className = "topic";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = done;
+      checkbox.onchange = () => {
+        localStorage.setItem(studentKey, checkbox.checked);
+        loadTopics(); // refresh chart
+      };
+
+      const label = document.createElement("label");
+      label.textContent = topic;
+
+      div.appendChild(checkbox);
+      div.appendChild(label);
+      topicList.appendChild(div);
+    });
+
+    updateChart(studentCompleted, availableCount - studentCompleted);
+  }
+
+  function resetMyProgress() {
+    const subject = document.getElementById("subject").value;
+    const topics = syllabus[subject];
+    topics.forEach((_, index) => {
+      localStorage.removeItem(`student_${subject}_${index}`);
+    });
+    loadTopics();
+  }
+
+  function updateChart(completed, remaining) {
+    const data = {
+      labels: ["Completed", "Remaining"],
+      datasets: [{
+        data: [completed, remaining],
+        backgroundColor: ["#28a745", "#ffc107"],
+        borderWidth: 1
+      }]
+    };
+
+    if (chart) {
+      chart.data = data;
+      chart.update();
+    } else {
+      const ctx = document.getElementById("studentChart").getContext("2d");
+      chart = new Chart(ctx, {
+        type: "pie",
+        data: data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "bottom"
+            }
+          }
+        }
+      });
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("userRole");
+    window.location.href = "index.html";
+  }
+
+  // Block access if not student
+  if (localStorage.getItem("userRole") !== "student") {
+    window.location.href = "index.html";
+  }
+
+  window.onload = loadTopics;
+</script>
+
+</body>
+</html>
