@@ -46,11 +46,22 @@
     .topic {
       margin: 10px 0;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
+      padding: 15px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #f9f9f9;
+      transition: background-color 0.2s;
+    }
+
+    .topic:hover {
+      background: #f0f8ff;
     }
 
     .topic input {
       margin-right: 10px;
+      margin-top: 5px;
+      transform: scale(1.2);
     }
 
     canvas {
@@ -95,9 +106,10 @@
 
   <label for="subject">Select Subject:</label>
   <select id="subject" onchange="loadTopics()">
-    <option value="dsa">Data Structures</option>
-    <option value="os">Operating Systems</option>
-    <option value="math">Mathematics</option>
+    <option value="mathematics">Mathematics for Computer and Information Science-3</option>
+    <option value="theory-of-computation">Theory of Computation</option>
+    <option value="data-structures">Data Structures and Algorithms</option>
+    <option value="object-oriented-programming">Object Oriented Programming</option>
   </select>
 
   <div id="topicList"></div>
@@ -175,7 +187,10 @@
       };
 
       const label = document.createElement("label");
-      label.textContent = topic;
+      label.innerHTML = `<strong>Module ${index + 1}:</strong> ${topic}`;
+      label.style.lineHeight = "1.5";
+      label.style.marginBottom = "10px";
+      label.style.display = "block";
 
       div.appendChild(checkbox);
       div.appendChild(label);
