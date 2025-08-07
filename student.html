@@ -6,34 +6,35 @@
   <title>Student Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
   <script>
     if (localStorage.getItem("userRole") !== "student") {
       window.location.href = "index.html";
     }
   </script>
 
-
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f3f6f9;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       margin: 0;
       padding: 20px;
+      min-height: 100vh;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: auto;
       background: white;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      color: #333;
+      font-size: 28px;
     }
 
     select, label {
@@ -43,31 +44,88 @@
       font-size: 16px;
     }
 
-    .topic {
-      margin: 10px 0;
+    select {
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .module {
+      margin: 20px 0;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: #f8f9fa;
+      overflow: hidden;
+    }
+
+    .module-header {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 15px 20px;
+      font-weight: bold;
+      font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .module-progress {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+
+    .subtopics {
+      padding: 20px;
+    }
+
+    .subtopic {
+      margin: 12px 0;
       display: flex;
       align-items: flex-start;
-      padding: 15px;
-      border: 1px solid #e0e0e0;
+      padding: 12px;
       border-radius: 8px;
-      background: #f9f9f9;
-      transition: background-color 0.2s;
-      min-height: 80px;
+      background: white;
+      border: 1px solid #e9ecef;
+      transition: all 0.3s ease;
     }
 
-    .topic:hover {
+    .subtopic:hover {
       background: #f0f8ff;
+      border-color: #667eea;
+      transform: translateX(5px);
     }
 
-    .topic input {
-      margin-right: 10px;
+    .subtopic input {
+      margin-right: 12px;
       margin-top: 5px;
-      transform: scale(1.2);
+      transform: scale(1.3);
+      cursor: pointer;
+    }
+
+    .subtopic label {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #555;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .subtopic.completed {
+      background: #e8f5e8;
+      border-color: #28a745;
+    }
+
+    .subtopic.completed label {
+      color: #155724;
     }
 
     canvas {
       max-width: 100%;
       margin-top: 30px;
+      border-radius: 10px;
     }
 
     .buttons {
@@ -79,24 +137,58 @@
     }
 
     button {
-      padding: 10px 20px;
-      background: #007BFF;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
     }
 
     button:hover {
-      background: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
     .reset {
-      background: #dc3545;
+      background: linear-gradient(135deg, #dc3545, #c82333);
     }
 
-    .reset:hover {
-      background: #b02a37;
+    .chart-container {
+      position: relative;
+      margin-top: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+    }
+
+    .progress-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .progress-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      border-left: 4px solid #667eea;
+    }
+
+    .progress-card h4 {
+      margin: 0 0 10px 0;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .progress-card .percentage {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
     }
   </style>
 </head>
@@ -115,129 +207,209 @@
 
   <div id="topicList"></div>
 
- <div class="buttons">
-  <button onclick="window.location.href='index.html'">← Back</button>
-  <button onclick="saveMyProgress()">💾 Save</button>
-  <button class="reset" onclick="resetMyProgress()">Reset My Progress</button>
-  <button onclick="logout()">Logout</button>
-</div>
+  <div class="chart-container">
+    <div class="progress-summary" id="progressSummary"></div>
+    <canvas id="studentChart" width="400" height="400"></canvas>
+  </div>
 
-  <canvas id="studentChart" width="400" height="400"></canvas>
+  <div class="buttons">
+    <button onclick="window.location.href='index.html'">← Back</button>
+    <button onclick="saveMyProgress()">💾 Save</button>
+    <button class="reset" onclick="resetMyProgress()">Reset My Progress</button>
+    <button onclick="logout()">Logout</button>
+  </div>
 </div>
 
 <script>
   const syllabus = {
     "mathematics": [
-      "Random variables, Discrete random variables and their probability distributions, Cumulative distribution function, Expectation, Mean and variance, the Binomial probability distribution, the Poisson probability distribution ,Poisson distribution as  a limit of the binomial distribution ,Joint pmf of two discrete random variables ,Marginal pmf, Independent random variables ,Expected value of  a function of two discrete variables.",
-      "Continuous random variables and their probability distributions ,Cumulative distribution function ,Expectation ,Mean and variance ,Uniform ,Normal and Exponential distributions, Joint pdf of two Continuous random variables ,Marginal pdf ,Independent random variables ,Expectation value of a function of two continuous variables.",
-      "Limit theorems :Markov's Inequality ,Chebyshev's Inequality ,Strong Law of Large Numbers(Without proof),Central Limit Theorem(without proof), Stochastic Processes: Discrete-time process, Continuous-time process ,Counting Processes, The Poisson Process, Interarrival times (Theorems without proof).",
-      "Markov Chains, Random Walk Model ,Chapman–Kolmogorov Equations ,Classification of States, Irreducible Markovchain ,Recurrent state ,Transient state ,Long-Run Proportions.(Theorems without proof)."
+      "Random variables, Discrete random variables and their probability distributions, Cumulative distribution function, Expectation, Mean and variance, the Binomial probability distribution, the Poisson probability distribution, Poisson distribution as a limit of the binomial distribution, Joint pmf of two discrete random variables, Marginal pmf, Independent random variables, Expected value of a function of two discrete variables",
+      "Continuous random variables and their probability distributions, Cumulative distribution function, Expectation, Mean and variance, Uniform, Normal and Exponential distributions, Joint pdf of two Continuous random variables, Marginal pdf, Independent random variables, Expectation value of a function of two continuous variables",
+      "Limit theorems: Markov's Inequality, Chebyshev's Inequality, Strong Law of Large Numbers(Without proof), Central Limit Theorem(without proof), Stochastic Processes: Discrete-time process, Continuous-time process, Counting Processes, The Poisson Process, Interarrival times (Theorems without proof)",
+      "Markov Chains, Random Walk Model, Chapman–Kolmogorov Equations, Classification of States, Irreducible Markov chain, Recurrent state, Transient state, Long-Run Proportions.(Theorems without proof)"
     ],
     "theory-of-computation": [
-      "Motivation for studying computability, need for mathematical modeling automata, Introducing automata through simple models-On/Off switch, coffee vending machine. Three basic concepts: Alphabet, Strings, and Languages. Formal definition of a finite automaton, Deterministic Finite Automata(DFA),Regular languages, Nondeterminism(guess and verify paradigm),Formal definition of a non deterministic finite automaton, NFA with epsilon transitions ,Eliminating epsilon transitions(Proof not expected),Equivalence of NFAs and DFAs (Proof not expected)-The Subset Construction .DFA State Minimization ,Applications of finite automata- text search ,keyword recognition.",
-      "The formal definition of a regular expression, Building Regular Expressions, Equivalence with finite automata (Proof not expected) Converting FA to Regular Expressions ,Converting Regular Expressions to FA, Pattern Matching and Regular Expressions, Regular grammar, Equivalence with FA-Conversion in both direction .Closure and Decision Properties of Regular Languages(with proofs),The Pumping Lemma for Regular Languages (with formal proof), Pumping lemma as a tool to prove non regularity of languages, Formal definition of a context-free grammar, Designing context-free grammars, Left most and Right most Derivations Using a Grammar, Parse Trees ,Ambiguous Grammars, Resolving ambiguity, Inherent ambiguity CFGs ,and programming languages.",
-      "Formal definition of a pushdown automaton ,DPDA and NPDA, Examples of pushdown automata Equivalence NPDAs and CFGs(Proof not expected)- conversions in both directions Elimination of useless symbols and productions, Eliminating epsilon productions, Eliminating unit productions, Chomsky normal form ,Greibach normal form, The Pumping Lemma for Context-Free Languages (with formal proof), Closure and Decision Properties of Context-Free Languages (with formal proofs).",
-      "The formal definition of a Turing machine ,Examples of Turing machines-Turing machines as language acceptors, Turing machines as computers of functions ,Variants of Turing Machines(Proofs for equivalence with basic model not expected),Recursive and recursively enumerable languages Chomskian hierarchy,Linear bounded automaton as a restricted TM. Church Turing thesis, Encoding of TMs, Universal Machine and Diagonalization,Reductions,Decidable and Undecidable Problems ,Halting problem, Post Correspondence Problem and the proofs for their undecidability."
+      "Motivation for studying computability, need for mathematical modeling automata, Introducing automata through simple models-On/Off switch, coffee vending machine, Three basic concepts: Alphabet, Strings, and Languages, Formal definition of a finite automaton, Deterministic Finite Automata(DFA), Regular languages, Nondeterminism(guess and verify paradigm), Formal definition of a non deterministic finite automaton, NFA with epsilon transitions, Eliminating epsilon transitions(Proof not expected), Equivalence of NFAs and DFAs (Proof not expected)-The Subset Construction, DFA State Minimization, Applications of finite automata- text search, keyword recognition",
+      "The formal definition of a regular expression, Building Regular Expressions, Equivalence with finite automata (Proof not expected) Converting FA to Regular Expressions, Converting Regular Expressions to FA, Pattern Matching and Regular Expressions, Regular grammar, Equivalence with FA-Conversion in both direction, Closure and Decision Properties of Regular Languages(with proofs), The Pumping Lemma for Regular Languages (with formal proof), Pumping lemma as a tool to prove non regularity of languages, Formal definition of a context-free grammar, Designing context-free grammars, Left most and Right most Derivations Using a Grammar, Parse Trees, Ambiguous Grammars, Resolving ambiguity, Inherent ambiguity CFGs, and programming languages",
+      "Formal definition of a pushdown automaton, DPDA and NPDA, Examples of pushdown automata Equivalence NPDAs and CFGs(Proof not expected)- conversions in both directions Elimination of useless symbols and productions, Eliminating epsilon productions, Eliminating unit productions, Chomsky normal form, Greibach normal form, The Pumping Lemma for Context-Free Languages (with formal proof), Closure and Decision Properties of Context-Free Languages (with formal proofs)",
+      "The formal definition of a Turing machine, Examples of Turing machines-Turing machines as language acceptors, Turing machines as computers of functions, Variants of Turing Machines(Proofs for equivalence with basic model not expected), Recursive and recursively enumerable languages Chomskian hierarchy, Linear bounded automaton as a restricted TM, Church Turing thesis, Encoding of TMs, Universal Machine and Diagonalization, Reductions, Decidable and Undecidable Problems, Halting problem, Post Correspondence Problem and the proofs for their undecidability"
     ],
     "data-structures": [
-      "Definitions; Data Abstraction; Performance Analysis- Time & Space Complexity, Asymptotic Notations; Polynomial representation using Arrays, Sparse matrix(Tuple representation);Stacks and Queues-Stacks ,Multi-Stacks ,Queues ,Circular Queues, Double Ended Queues ;Evaluation of Expressions Infix to Postfix, Evaluating Postfix Expressions.",
-      "Singly Linked List-Operations on Linked List ,Stacks and Queues using Linked List ,Polynomial representation using Linked List ;Doubly Linked List; Circular Linked List ;Memory allocation- First-fit, Best-fit, and Worst-fit allocation schemes ;Garbage collection and compaction",
-      "Trees :-Representation Of Trees; Binary Trees- Types and Properties, Binary Tree Representation ,Tree Operations ,Tree Traversals ;Expression Trees ;Binary Search Trees-Binary Search Tree Operations ;Binary Heaps-Binary Heap Operations ,Priority Queue. Graphs :-Definitions ;Representation of Graphs ;Depth First Search and Breadth First Search; Applications of Graphs- Single Source All Destination.",
-      "Sorting Techniques :- Selection Sort, Insertion Sort ,Quick Sort, Merge Sort ,Heap Sort ,Radix Sort.Searching Techniques :-Linear Search ,Binary Search ,Hashing-Hashing functions : Mid square, Division, Folding, Digit Analysis; Collision Resolution : Linear probing ,Quadratic Probing ,Double hashing ,Open hashing."
+      "Definitions, Data Abstraction, Performance Analysis- Time & Space Complexity, Asymptotic Notations, Polynomial representation using Arrays, Sparse matrix(Tuple representation), Stacks and Queues-Stacks, Multi-Stacks, Queues, Circular Queues, Double Ended Queues, Evaluation of Expressions Infix to Postfix, Evaluating Postfix Expressions",
+      "Singly Linked List-Operations on Linked List, Stacks and Queues using Linked List, Polynomial representation using Linked List, Doubly Linked List, Circular Linked List, Memory allocation- First-fit, Best-fit, and Worst-fit allocation schemes, Garbage collection and compaction",
+      "Trees: Representation Of Trees, Binary Trees- Types and Properties, Binary Tree Representation, Tree Operations, Tree Traversals, Expression Trees, Binary Search Trees-Binary Search Tree Operations, Binary Heaps-Binary Heap Operations, Priority Queue, Graphs: Definitions, Representation of Graphs, Depth First Search and Breadth First Search, Applications of Graphs- Single Source All Destination",
+      "Sorting Techniques: Selection Sort, Insertion Sort, Quick Sort, Merge Sort, Heap Sort, Radix Sort, Searching Techniques: Linear Search, Binary Search, Hashing-Hashing functions: Mid square, Division, Folding, Digit Analysis, Collision Resolution: Linear probing, Quadratic Probing, Double hashing, Open hashing"
     ],
     "object-oriented-programming": [
-      "Structure of a simple java program; Java programming Environment and Runtime Environment(Command Line & IDE);Java compiler; Java Virtual Machine; Primitive Data types and Wrapper Types; Casting and Autoboxing; Arrays; Strings; Vector class; Operators-Arithmetic, Bitwise ,Relational, Boolean Logical, Assignment, Conditional(Ternary);Operator Precedence; Control Statements-Selection Statements, Iteration Statements and Jump Statements; Functions; Command Line Arguments; Variable Length Arguments; Classes; Abstract Classes; Interfaces. [Use proper naming conventions] OOP Concepts: Data abstraction, encapsulation, inheritance, polymorphism, Procedural and object oriented programming paradigm; Microservices. Object Oriented Programming  in Java:Declaring Objects; Object Reference; Introduction to Methods ;Constructors; Access Modifiers; *this* keyword.",
-      "Polymorphism:Method Overloading, Using Objects as Parameters, Returning Objects, Recursion. Static Members ,Final Variables, Inner Classes, Inheritance-Super Class, Sub Class, Types of Inheritance, The super keyword, protected Members ,Calling Order of Constructors, Method Overriding, Dynamic Method Dispatch, Using final with Inheritance.",
-      "Packages-Defining a Package, CLASS PATH, Access Protection, Importing Packages. Interfaces-Interfaces v/s Abstract classes, defining an interface, implementing interfaces, accessing implementations through interface references, extending interface(s). Exception Handling- Checked Exceptions, Unchecked Exceptions, *try* Block and *catch* Clause ,Multiple catch Clauses, Nested try Statements ,throw, throws and finally, Java Built- in Exceptions, Custom Exceptions.Introduction to design patterns in Java :Singleton and Adaptor.",
-      "SOLID Principles in Java(https://www.javatpoint.com/solid-principles java)Swings fundamentals–Overview of AWT ,Swing v/s AWT ,Swing Key Features ,Model View Controller(MVC),Swing Controls, Components and Containers, Swing Packages, Event Handling in Swings, Swing Layout Managers, Exploring Swings–J Frame, J Label, The Swing Buttons, J Text Field. Event handling –Event Handling Mechanisms, Delegation Event Model, Event Classes, Sources of Events, Event Listener Interfaces, Using the Delegation Event Model. Developing Data base Applications using JDBC–JDBC overview, Types Steps, Common JDBC Components, Connection Establishment, SQL Fundamentals [For projects only]- Creating and Executing basic SQL Queries, Working with Result Set, Performing CRUD Operations with JDBC."
+      "Structure of a simple java program, Java programming Environment and Runtime Environment(Command Line & IDE), Java compiler, Java Virtual Machine, Primitive Data types and Wrapper Types, Casting and Autoboxing, Arrays, Strings, Vector class, Operators-Arithmetic, Bitwise, Relational, Boolean Logical, Assignment, Conditional(Ternary), Operator Precedence, Control Statements-Selection Statements, Iteration Statements and Jump Statements, Functions, Command Line Arguments, Variable Length Arguments, Classes, Abstract Classes, Interfaces, [Use proper naming conventions] OOP Concepts: Data abstraction, encapsulation, inheritance, polymorphism, Procedural and object oriented programming paradigm, Microservices, Object Oriented Programming in Java:Declaring Objects, Object Reference, Introduction to Methods, Constructors, Access Modifiers, *this* keyword",
+      "Polymorphism:Method Overloading, Using Objects as Parameters, Returning Objects, Recursion, Static Members, Final Variables, Inner Classes, Inheritance-Super Class, Sub Class, Types of Inheritance, The super keyword, protected Members, Calling Order of Constructors, Method Overriding, Dynamic Method Dispatch, Using final with Inheritance",
+      "Packages-Defining a Package, CLASS PATH, Access Protection, Importing Packages, Interfaces-Interfaces v/s Abstract classes, defining an interface, implementing interfaces, accessing implementations through interface references, extending interface(s), Exception Handling- Checked Exceptions, Unchecked Exceptions, *try* Block and *catch* Clause, Multiple catch Clauses, Nested try Statements, throw, throws and finally, Java Built- in Exceptions, Custom Exceptions, Introduction to design patterns in Java: Singleton and Adaptor",
+      "SOLID Principles in Java, Swings fundamentals–Overview of AWT, Swing v/s AWT, Swing Key Features, Model View Controller(MVC), Swing Controls, Components and Containers, Swing Packages, Event Handling in Swings, Swing Layout Managers, Exploring Swings–J Frame, J Label, The Swing Buttons, J Text Field, Event handling –Event Handling Mechanisms, Delegation Event Model, Event Classes, Sources of Events, Event Listener Interfaces, Using the Delegation Event Model, Developing Data base Applications using JDBC–JDBC overview, Types Steps, Common JDBC Components, Connection Establishment, SQL Fundamentals [For projects only]- Creating and Executing basic SQL Queries, Working with Result Set, Performing CRUD Operations with JDBC"
     ]
   };
 
   let chart;
 
+  function saveMyProgress() {
+    alert("Progress saved successfully!");
+  }
+
   function loadTopics() {
     const subject = document.getElementById("subject").value;
-    const topics = syllabus[subject];
+    const modules = syllabus[subject];
     const topicList = document.getElementById("topicList");
     topicList.innerHTML = "";
 
     const globalProgress = JSON.parse(localStorage.getItem("globalProgress")) || {};
-    const available = globalProgress[subject] || Array(topics.length).fill(false);
+    const availableModules = globalProgress[subject] || Array(modules.length).fill(false);
 
-    let studentCompleted = 0;
-    let availableCount = 0;
+    let moduleData = [];
 
-    topics.forEach((topic, index) => {
-      if (!available[index]) return; // topic not covered by teacher
+    modules.forEach((moduleContent, moduleIndex) => {
+      if (!availableModules[moduleIndex]) return; // module not covered by teacher
 
-      availableCount++;
+      const subtopics = moduleContent.split(',').map(s => s.trim());
+      
+      const moduleDiv = document.createElement("div");
+      moduleDiv.className = "module";
 
-      const studentKey = `student_${subject}_${index}`;
-      const done = localStorage.getItem(studentKey) === "true";
+      let completedSubtopics = 0;
+      subtopics.forEach((_, subtopicIndex) => {
+        const studentKey = `student_${subject}_${moduleIndex}_${subtopicIndex}`;
+        if (localStorage.getItem(studentKey) === "true") {
+          completedSubtopics++;
+        }
+      });
 
-      if (done) studentCompleted++;
+      const progressPercent = Math.round((completedSubtopics / subtopics.length) * 100);
 
-      const div = document.createElement("div");
-      div.className = "topic";
+      const headerDiv = document.createElement("div");
+      headerDiv.className = "module-header";
+      headerDiv.innerHTML = `
+        <span>Module ${moduleIndex + 1}</span>
+        <span class="module-progress">${completedSubtopics}/${subtopics.length} (${progressPercent}%)</span>
+      `;
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = done;
-      checkbox.onchange = () => {
-        localStorage.setItem(studentKey, checkbox.checked);
-        loadTopics(); // refresh chart
-      };
+      const subtopicsDiv = document.createElement("div");
+      subtopicsDiv.className = "subtopics";
 
-      const label = document.createElement("label");
-      label.innerHTML = `<strong>Module ${index + 1}:</strong><br>${topic}`;
-      label.style.lineHeight = "1.5";
-      label.style.marginBottom = "10px";
-      label.style.display = "block";
-      label.style.fontSize = "14px";
-      label.style.color = "#333";
+      subtopics.forEach((subtopic, subtopicIndex) => {
+        const studentKey = `student_${subject}_${moduleIndex}_${subtopicIndex}`;
+        const isCompleted = localStorage.getItem(studentKey) === "true";
 
-      div.appendChild(checkbox);
-      div.appendChild(label);
-      topicList.appendChild(div);
+        const subtopicDiv = document.createElement("div");
+        subtopicDiv.className = `subtopic ${isCompleted ? 'completed' : ''}`;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = isCompleted;
+        checkbox.onchange = () => {
+          localStorage.setItem(studentKey, checkbox.checked);
+          loadTopics(); // refresh to update progress
+        };
+
+        const label = document.createElement("label");
+        label.textContent = subtopic;
+        label.onclick = () => {
+          checkbox.checked = !checkbox.checked;
+          checkbox.onchange();
+        };
+
+        subtopicDiv.appendChild(checkbox);
+        subtopicDiv.appendChild(label);
+        subtopicsDiv.appendChild(subtopicDiv);
+      });
+
+      moduleDiv.appendChild(headerDiv);
+      moduleDiv.appendChild(subtopicsDiv);
+      topicList.appendChild(moduleDiv);
+
+      moduleData.push({
+        name: `Module ${moduleIndex + 1}`,
+        completed: completedSubtopics,
+        total: subtopics.length,
+        percentage: progressPercent
+      });
     });
 
-    updateChart(studentCompleted, availableCount - studentCompleted);
+    updateChart(moduleData);
+    updateProgressSummary(moduleData);
   }
 
   function resetMyProgress() {
     const subject = document.getElementById("subject").value;
-    const topics = syllabus[subject];
-    topics.forEach((_, index) => {
-      localStorage.removeItem(`student_${subject}_${index}`);
+    const modules = syllabus[subject];
+    
+    modules.forEach((moduleContent, moduleIndex) => {
+      const subtopics = moduleContent.split(',');
+      subtopics.forEach((_, subtopicIndex) => {
+        localStorage.removeItem(`student_${subject}_${moduleIndex}_${subtopicIndex}`);
+      });
     });
     loadTopics();
   }
 
-  function updateChart(completed, remaining) {
-    const data = {
-      labels: ["Completed", "Remaining"],
+  function updateProgressSummary(moduleData) {
+    const summaryDiv = document.getElementById("progressSummary");
+    summaryDiv.innerHTML = "";
+
+    moduleData.forEach(module => {
+      const card = document.createElement("div");
+      card.className = "progress-card";
+      card.innerHTML = `
+        <h4>${module.name}</h4>
+        <div class="percentage">${module.percentage}%</div>
+        <div>${module.completed}/${module.total} completed</div>
+      `;
+      summaryDiv.appendChild(card);
+    });
+  }
+
+  function updateChart(moduleData) {
+    const labels = moduleData.map(m => m.name);
+    const data = moduleData.map(m => m.percentage);
+    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c'];
+
+    const chartData = {
+      labels: labels,
       datasets: [{
-        data: [completed, remaining],
-        backgroundColor: ["#28a745", "#ffc107"],
-        borderWidth: 1
+        data: data,
+        backgroundColor: colors.slice(0, moduleData.length),
+        borderWidth: 2,
+        borderColor: '#fff'
       }]
     };
 
     if (chart) {
-      chart.data = data;
+      chart.data = chartData;
       chart.update();
     } else {
       const ctx = document.getElementById("studentChart").getContext("2d");
       chart = new Chart(ctx, {
-        type: "pie",
-        data: data,
+        type: "doughnut",
+        data: chartData,
         options: {
           responsive: true,
           plugins: {
             legend: {
-              position: "bottom"
+              position: "bottom",
+              labels: {
+                padding: 20,
+                font: {
+                  size: 14
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const module = moduleData[context.dataIndex];
+                  return `${context.label}: ${module.completed}/${module.total} (${context.parsed}%)`;
+                }
+              }
             }
-          }
+          },
+          cutout: '50%'
         }
       });
     }
