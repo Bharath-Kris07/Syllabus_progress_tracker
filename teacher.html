@@ -92,10 +92,10 @@
 
   <label for="subject">Select Subject:</label>
   <select id="subject" onchange="loadTopics()">
-    <option value="mathematics">Mathematics for Computer and Information Science-3</option>
-    <option value="theory-of-computation">Theory of Computation</option>
-    <option value="data-structures">Data Structures and Algorithms</option>
-    <option value="object-oriented-programming">Object Oriented Programming</option>
+    <option value="mathematics">MATHEMATICS FOR COMPUTER AND INFORMATION SCIENCE-3</option>
+    <option value="theory-of-computation">THEORY OF COMPUTATION</option>
+    <option value="data-structures">DATA STRUCTURES AND ALGORITHMS</option>
+    <option value="object-oriented-programming">OBJECT ORIENTED PROGRAMMING</option>
   </select>
 
   <div id="topicList"></div>
@@ -111,37 +111,46 @@
 
 <script>
   const syllabus = {
-    "mathematics": [
-      "Random variables, Discrete random variables and their probability distributions, Cumulative distribution function, Expectation, Mean and variance, the Binomial probability distribution, the Poisson probability distribution ,Poisson distribution as  a limit of the binomial distribution ,Joint pmf of two discrete random variables ,Marginal pmf, Independent random variables ,Expected value of  a function of two discrete variables.",
-      "Continuous random variables and their probability distributions ,Cumulative distribution function ,Expectation ,Mean and variance ,Uniform ,Normal and Exponential distributions, Joint pdf of two Continuous random variables ,Marginal pdf ,Independent random variables ,Expectation value of a function of two continuous variables.",
-      "Limit theorems :Markov's Inequality ,Chebyshev's Inequality ,Strong Law of Large Numbers(Without proof),Central Limit Theorem(without proof), Stochastic Processes: Discrete-time process, Continuous-time process ,Counting Processes, The Poisson Process, Interarrival times (Theorems without proof).",
-      "Markov Chains, Random Walk Model ,Chapman–Kolmogorov Equations ,Classification of States, Irreducible Markovchain ,Recurrent state ,Transient state ,Long-Run Proportions.(Theorems without proof)."
-    ],
-    "theory-of-computation": [
-      "Motivation for studying computability, need for mathematical modeling automata, Introducing automata through simple models-On/Off switch, coffee vending machine. Three basic concepts: Alphabet, Strings, and Languages. Formal definition of a finite automaton, Deterministic Finite Automata(DFA),Regular languages, Nondeterminism(guess and verify paradigm),Formal definition of a non deterministic finite automaton, NFA with epsilon transitions ,Eliminating epsilon transitions(Proof not expected),Equivalence of NFAs and DFAs (Proof not expected)-The Subset Construction .DFA State Minimization ,Applications of finite automata- text search ,keyword recognition.",
-      "The formal definition of a regular expression, Building Regular Expressions, Equivalence with finite automata (Proof not expected) Converting FA to Regular Expressions ,Converting Regular Expressions to FA, Pattern Matching and Regular Expressions, Regular grammar, Equivalence with FA-Conversion in both direction .Closure and Decision Properties of Regular Languages(with proofs),The Pumping Lemma for Regular Languages (with formal proof), Pumping lemma as a tool to prove non regularity of languages, Formal definition of a context-free grammar, Designing context-free grammars, Left most and Right most Derivations Using a Grammar, Parse Trees ,Ambiguous Grammars, Resolving ambiguity, Inherent ambiguity CFGs ,and programming languages.",
-      "Formal definition of a pushdown automaton ,DPDA and NPDA, Examples of pushdown automata Equivalence NPDAs and CFGs(Proof not expected)- conversions in both directions Elimination of useless symbols and productions, Eliminating epsilon productions, Eliminating unit productions, Chomsky normal form ,Greibach normal form, The Pumping Lemma for Context-Free Languages (with formal proof), Closure and Decision Properties of Context-Free Languages (with formal proofs).",
-      "The formal definition of a Turing machine ,Examples of Turing machines-Turing machines as language acceptors, Turing machines as computers of functions ,Variants of Turing Machines(Proofs for equivalence with basic model not expected),Recursive and recursively enumerable languages Chomskian hierarchy,Linear bounded automaton as a restricted TM. Church Turing thesis, Encoding of TMs, Universal Machine and Diagonalization,Reductions,Decidable and Undecidable Problems ,Halting problem, Post Correspondence Problem and the proofs for their undecidability."
-    ],
-    "data-structures": [
-      "Definitions; Data Abstraction; Performance Analysis- Time & Space Complexity, Asymptotic Notations; Polynomial representation using Arrays, Sparse matrix(Tuple representation);Stacks and Queues-Stacks ,Multi-Stacks ,Queues ,Circular Queues, Double Ended Queues ;Evaluation of Expressions Infix to Postfix, Evaluating Postfix Expressions.",
-      "Singly Linked List-Operations on Linked List ,Stacks and Queues using Linked List ,Polynomial representation using Linked List ;Doubly Linked List; Circular Linked List ;Memory allocation- First-fit, Best-fit, and Worst-fit allocation schemes ;Garbage collection and compaction",
-      "Trees :-Representation Of Trees; Binary Trees- Types and Properties, Binary Tree Representation ,Tree Operations ,Tree Traversals ;Expression Trees ;Binary Search Trees-Binary Search Tree Operations ;Binary Heaps-Binary Heap Operations ,Priority Queue. Graphs :-Definitions ;Representation of Graphs ;Depth First Search and Breadth First Search; Applications of Graphs- Single Source All Destination.",
-      "Sorting Techniques :- Selection Sort, Insertion Sort ,Quick Sort, Merge Sort ,Heap Sort ,Radix Sort.Searching Techniques :-Linear Search ,Binary Search ,Hashing-Hashing functions : Mid square, Division, Folding, Digit Analysis; Collision Resolution : Linear probing ,Quadratic Probing ,Double hashing ,Open hashing."
-    ],
-    "object-oriented-programming": [
-      "Structure of a simple java program; Java programming Environment and Runtime Environment(Command Line & IDE);Java compiler; Java Virtual Machine; Primitive Data types and Wrapper Types; Casting and Autoboxing; Arrays; Strings; Vector class; Operators-Arithmetic, Bitwise ,Relational, Boolean Logical, Assignment, Conditional(Ternary);Operator Precedence; Control Statements-Selection Statements, Iteration Statements and Jump Statements; Functions; Command Line Arguments; Variable Length Arguments; Classes; Abstract Classes; Interfaces. [Use proper naming conventions] OOP Concepts: Data abstraction, encapsulation, inheritance, polymorphism, Procedural and object oriented programming paradigm; Microservices. Object Oriented Programming  in Java:Declaring Objects; Object Reference; Introduction to Methods ;Constructors; Access Modifiers; *this* keyword.",
-      "Polymorphism:Method Overloading, Using Objects as Parameters, Returning Objects, Recursion. Static Members ,Final Variables, Inner Classes, Inheritance-Super Class, Sub Class, Types of Inheritance, The super keyword, protected Members ,Calling Order of Constructors, Method Overriding, Dynamic Method Dispatch, Using final with Inheritance.",
-      "Packages-Defining a Package, CLASS PATH, Access Protection, Importing Packages. Interfaces-Interfaces v/s Abstract classes, defining an interface, implementing interfaces, accessing implementations through interface references, extending interface(s). Exception Handling- Checked Exceptions, Unchecked Exceptions, *try* Block and *catch* Clause ,Multiple catch Clauses, Nested try Statements ,throw, throws and finally, Java Built- in Exceptions, Custom Exceptions.Introduction to design patterns in Java :Singleton and Adaptor.",
-      "SOLID Principles in Java(https://www.javatpoint.com/solid-principles java)Swings fundamentals–Overview of AWT ,Swing v/s AWT ,Swing Key Features ,Model View Controller(MVC),Swing Controls, Components and Containers, Swing Packages, Event Handling in Swings, Swing Layout Managers, Exploring Swings–J Frame, J Label, The Swing Buttons, J Text Field. Event handling –Event Handling Mechanisms, Delegation Event Model, Event Classes, Sources of Events, Event Listener Interfaces, Using the Delegation Event Model. Developing Data base Applications using JDBC–JDBC overview, Types Steps, Common JDBC Components, Connection Establishment, SQL Fundamentals [For projects only]- Creating and Executing basic SQL Queries, Working with Result Set, Performing CRUD Operations with JDBC."
-    ]
+    "mathematics": "Random variables, Discrete random variables and their probability distributions, Cumulative distribution function, Expectation, Mean and variance, the Binomial probability distribution, the Poisson probability distribution ,Poisson distribution as  a limit of the binomial distribution ,Joint pmf of two discrete random variables ,Marginal pmf, Independent random variables ,Expected value of  a function of two discrete variables.",
+    "theory-of-computation": "Motivation for studying computability, need for mathematical modeling automata, Introducing automata through simple models-On/Off switch, coffee vending machine. Three basic concepts: Alphabet, Strings, and Languages. Formal definition of a finite automaton, Deterministic Finite Automata(DFA),Regular languages, Nondeterminism(guess and verify paradigm),Formal definition of a non deterministic finite automaton, NFA with epsilon transitions ,Eliminating epsilon transitions(Proof not expected),Equivalence of NFAs and DFAs (Proof not expected)-The Subset Construction .DFA State Minimization ,Applications of finite automata- text search ,keyword recognition.",
+    "data-structures": "Definitions; Data Abstraction; Performance Analysis- Time & Space Complexity, Asymptotic Notations; Polynomial representation using Arrays, Sparse matrix(Tuple representation);Stacks and Queues-Stacks ,Multi-Stacks ,Queues ,Circular Queues, Double Ended Queues ;Evaluation of Expressions Infix to Postfix, Evaluating Postfix Expressions.",
+    "object-oriented-programming": "Structure of a simple java program; Java programming Environment and Runtime Environment(Command Line & IDE);Java compiler; Java Virtual Machine; Primitive Data types and Wrapper Types; Casting and Autoboxing; Arrays; Strings; Vector class; Operators-Arithmetic, Bitwise ,Relational, Boolean Logical, Assignment, Conditional(Ternary);Operator Precedence; Control Statements-Selection Statements, Iteration Statements and Jump Statements; Functions; Command Line Arguments; Variable Length Arguments; Classes; Abstract Classes; Interfaces. [Use proper naming conventions] OOP Concepts: Data abstraction, encapsulation, inheritance, polymorphism, Procedural and object oriented programming paradigm; Microservices. Object Oriented Programming  in Java:Declaring Objects; Object Reference; Introduction to Methods ;Constructors; Access Modifiers; *this* keyword."
   };
 
   let chart;
 
   function loadTopics() {
     const subject = document.getElementById("subject").value;
-    const topics = syllabus[subject];
+    
+    // Load syllabus data from JSON structure
+    const syllabusData = {
+      "mathematics": [
+        "Random variables, Discrete random variables and their probability distributions, Cumulative distribution function, Expectation, Mean and variance, the Binomial probability distribution, the Poisson probability distribution ,Poisson distribution as  a limit of the binomial distribution ,Joint pmf of two discrete random variables ,Marginal pmf, Independent random variables ,Expected value of  a function of two discrete variables.",
+        "Continuous random variables and their probability distributions ,Cumulative distribution function ,Expectation ,Mean and variance ,Uniform ,Normal and Exponential distributions, Joint pdf of two Continuous random variables ,Marginal pdf ,Independent random variables ,Expectation value of a function of two continuous variables.",
+        "Limit theorems :Markov's Inequality ,Chebyshev's Inequality ,Strong Law of Large Numbers(Without proof),Central Limit Theorem(without proof), Stochastic Processes: Discrete-time process, Continuous-time process ,Counting Processes, The Poisson Process, Interarrival times (Theorems without proof).",
+        "Markov Chains, Random Walk Model ,Chapman–Kolmogorov Equations ,Classification of States, Irreducible Markovchain ,Recurrent state ,Transient state ,Long-Run Proportions.(Theorems without proof)."
+      ],
+      "theory-of-computation": [
+        "Motivation for studying computability, need for mathematical modeling automata, Introducing automata through simple models-On/Off switch, coffee vending machine. Three basic concepts: Alphabet, Strings, and Languages. Formal definition of a finite automaton, Deterministic Finite Automata(DFA),Regular languages, Nondeterminism(guess and verify paradigm),Formal definition of a non deterministic finite automaton, NFA with epsilon transitions ,Eliminating epsilon transitions(Proof not expected),Equivalence of NFAs and DFAs (Proof not expected)-The Subset Construction .DFA State Minimization ,Applications of finite automata- text search ,keyword recognition.",
+        "The formal definition of a regular expression, Building Regular Expressions, Equivalence with finite automata (Proof not expected) Converting FA to Regular Expressions ,Converting Regular Expressions to FA, Pattern Matching and Regular Expressions, Regular grammar, Equivalence with FA-Conversion in both direction .Closure and Decision Properties of Regular Languages(with proofs),The Pumping Lemma for Regular Languages (with formal proof), Pumping lemma as a tool to prove non regularity of languages, Formal definition of a context-free grammar, Designing context-free grammars, Left most and Right most Derivations Using a Grammar, Parse Trees ,Ambiguous Grammars, Resolving ambiguity, Inherent ambiguity CFGs ,and programming languages.",
+        "Formal definition of a pushdown automaton ,DPDA and NPDA, Examples of pushdown automata Equivalence NPDAs and CFGs(Proof not expected)- conversions in both directions Elimination of useless symbols and productions, Eliminating epsilon productions, Eliminating unit productions, Chomsky normal form ,Greibach normal form, The Pumping Lemma for Context-Free Languages (with formal proof), Closure and Decision Properties of Context-Free Languages (with formal proofs).",
+        "The formal definition of a Turing machine ,Examples of Turing machines-Turing machines as language acceptors, Turing machines as computers of functions ,Variants of Turing Machines(Proofs for equivalence with basic model not expected),Recursive and recursively enumerable languages Chomskian hierarchy,Linear bounded automaton as a restricted TM. Church Turing thesis, Encoding of TMs, Universal Machine and Diagonalization,Reductions,Decidable and Undecidable Problems ,Halting problem, Post Correspondence Problem and the proofs for their undecidability."
+      ],
+      "data-structures": [
+        "Definitions; Data Abstraction; Performance Analysis- Time & Space Complexity, Asymptotic Notations; Polynomial representation using Arrays, Sparse matrix(Tuple representation);Stacks and Queues-Stacks ,Multi-Stacks ,Queues ,Circular Queues, Double Ended Queues ;Evaluation of Expressions Infix to Postfix, Evaluating Postfix Expressions.",
+        "Singly Linked List-Operations on Linked List ,Stacks and Queues using Linked List ,Polynomial representation using Linked List ;Doubly Linked List; Circular Linked List ;Memory allocation- First-fit, Best-fit, and Worst-fit allocation schemes ;Garbage collection and compaction",
+        "Trees :-Representation Of Trees; Binary Trees- Types and Properties, Binary Tree Representation ,Tree Operations ,Tree Traversals ;Expression Trees ;Binary Search Trees-Binary Search Tree Operations ;Binary Heaps-Binary Heap Operations ,Priority Queue. Graphs :-Definitions ;Representation of Graphs ;Depth First Search and Breadth First Search; Applications of Graphs- Single Source All Destination.",
+        "Sorting Techniques :- Selection Sort, Insertion Sort ,Quick Sort, Merge Sort ,Heap Sort ,Radix Sort.Searching Techniques :-Linear Search ,Binary Search ,Hashing-Hashing functions : Mid square, Division, Folding, Digit Analysis; Collision Resolution : Linear probing ,Quadratic Probing ,Double hashing ,Open hashing."
+      ],
+      "object-oriented-programming": [
+        "Structure of a simple java program; Java programming Environment and Runtime Environment(Command Line & IDE);Java compiler; Java Virtual Machine; Primitive Data types and Wrapper Types; Casting and Autoboxing; Arrays; Strings; Vector class; Operators-Arithmetic, Bitwise ,Relational, Boolean Logical, Assignment, Conditional(Ternary);Operator Precedence; Control Statements-Selection Statements, Iteration Statements and Jump Statements; Functions; Command Line Arguments; Variable Length Arguments; Classes; Abstract Classes; Interfaces. [Use proper naming conventions] OOP Concepts: Data abstraction, encapsulation, inheritance, polymorphism, Procedural and object oriented programming paradigm; Microservices. Object Oriented Programming  in Java:Declaring Objects; Object Reference; Introduction to Methods ;Constructors; Access Modifiers; *this* keyword.",
+        "Polymorphism:Method Overloading, Using Objects as Parameters, Returning Objects, Recursion. Static Members ,Final Variables, Inner Classes, Inheritance-Super Class, Sub Class, Types of Inheritance, The super keyword, protected Members ,Calling Order of Constructors, Method Overriding, Dynamic Method Dispatch, Using final with Inheritance.",
+        "Packages-Defining a Package, CLASS PATH, Access Protection, Importing Packages. Interfaces-Interfaces v/s Abstract classes, defining an interface, implementing interfaces, accessing implementations through interface references, extending interface(s). Exception Handling- Checked Exceptions, Unchecked Exceptions, *try* Block and *catch* Clause ,Multiple catch Clauses, Nested try Statements ,throw, throws and finally, Java Built- in Exceptions, Custom Exceptions.Introduction to design patterns in Java :Singleton and Adaptor.",
+        "SOLID Principles in Java(https://www.javatpoint.com/solid-principles java)Swings fundamentals–Overview of AWT ,Swing v/s AWT ,Swing Key Features ,Model View Controller(MVC),Swing Controls, Components and Containers, Swing Packages, Event Handling in Swings, Swing Layout Managers, Exploring Swings–J Frame, J Label, The Swing Buttons, J Text Field. Event handling –Event Handling Mechanisms, Delegation Event Model, Event Classes, Sources of Events, Event Listener Interfaces, Using the Delegation Event Model. Developing Data base Applications using JDBC–JDBC overview, Types Steps, Common JDBC Components, Connection Establishment, SQL Fundamentals [For projects only]- Creating and Executing basic SQL Queries, Working with Result Set, Performing CRUD Operations with JDBC."
+      ]
+    };
+    
+    const topics = syllabusData[subject];
     const topicList = document.getElementById("topicList");
     topicList.innerHTML = "";
 
@@ -165,7 +174,10 @@
       };
 
       const label = document.createElement("label");
-      label.textContent = topic;
+      label.innerHTML = `<strong>Module ${index + 1}:</strong><br>${topic}`;
+      label.style.lineHeight = "1.5";
+      label.style.fontSize = "14px";
+      label.style.color = "#333";
 
       div.appendChild(checkbox);
       div.appendChild(label);
@@ -177,8 +189,34 @@
 
   function resetProgress() {
     const subject = document.getElementById("subject").value;
+    const syllabusData = {
+      "mathematics": [
+        "Random variables, Discrete random variables and their probability distributions, Cumulative distribution function, Expectation, Mean and variance, the Binomial probability distribution, the Poisson probability distribution ,Poisson distribution as  a limit of the binomial distribution ,Joint pmf of two discrete random variables ,Marginal pmf, Independent random variables ,Expected value of  a function of two discrete variables.",
+        "Continuous random variables and their probability distributions ,Cumulative distribution function ,Expectation ,Mean and variance ,Uniform ,Normal and Exponential distributions, Joint pdf of two Continuous random variables ,Marginal pdf ,Independent random variables ,Expectation value of a function of two continuous variables.",
+        "Limit theorems :Markov's Inequality ,Chebyshev's Inequality ,Strong Law of Large Numbers(Without proof),Central Limit Theorem(without proof), Stochastic Processes: Discrete-time process, Continuous-time process ,Counting Processes, The Poisson Process, Interarrival times (Theorems without proof).",
+        "Markov Chains, Random Walk Model ,Chapman–Kolmogorov Equations ,Classification of States, Irreducible Markovchain ,Recurrent state ,Transient state ,Long-Run Proportions.(Theorems without proof)."
+      ],
+      "theory-of-computation": [
+        "Motivation for studying computability, need for mathematical modeling automata, Introducing automata through simple models-On/Off switch, coffee vending machine. Three basic concepts: Alphabet, Strings, and Languages. Formal definition of a finite automaton, Deterministic Finite Automata(DFA),Regular languages, Nondeterminism(guess and verify paradigm),Formal definition of a non deterministic finite automaton, NFA with epsilon transitions ,Eliminating epsilon transitions(Proof not expected),Equivalence of NFAs and DFAs (Proof not expected)-The Subset Construction .DFA State Minimization ,Applications of finite automata- text search ,keyword recognition.",
+        "The formal definition of a regular expression, Building Regular Expressions, Equivalence with finite automata (Proof not expected) Converting FA to Regular Expressions ,Converting Regular Expressions to FA, Pattern Matching and Regular Expressions, Regular grammar, Equivalence with FA-Conversion in both direction .Closure and Decision Properties of Regular Languages(with proofs),The Pumping Lemma for Regular Languages (with formal proof), Pumping lemma as a tool to prove non regularity of languages, Formal definition of a context-free grammar, Designing context-free grammars, Left most and Right most Derivations Using a Grammar, Parse Trees ,Ambiguous Grammars, Resolving ambiguity, Inherent ambiguity CFGs ,and programming languages.",
+        "Formal definition of a pushdown automaton ,DPDA and NPDA, Examples of pushdown automata Equivalence NPDAs and CFGs(Proof not expected)- conversions in both directions Elimination of useless symbols and productions, Eliminating epsilon productions, Eliminating unit productions, Chomsky normal form ,Greibach normal form, The Pumping Lemma for Context-Free Languages (with formal proof), Closure and Decision Properties of Context-Free Languages (with formal proofs).",
+        "The formal definition of a Turing machine ,Examples of Turing machines-Turing machines as language acceptors, Turing machines as computers of functions ,Variants of Turing Machines(Proofs for equivalence with basic model not expected),Recursive and recursively enumerable languages Chomskian hierarchy,Linear bounded automaton as a restricted TM. Church Turing thesis, Encoding of TMs, Universal Machine and Diagonalization,Reductions,Decidable and Undecidable Problems ,Halting problem, Post Correspondence Problem and the proofs for their undecidability."
+      ],
+      "data-structures": [
+        "Definitions; Data Abstraction; Performance Analysis- Time & Space Complexity, Asymptotic Notations; Polynomial representation using Arrays, Sparse matrix(Tuple representation);Stacks and Queues-Stacks ,Multi-Stacks ,Queues ,Circular Queues, Double Ended Queues ;Evaluation of Expressions Infix to Postfix, Evaluating Postfix Expressions.",
+        "Singly Linked List-Operations on Linked List ,Stacks and Queues using Linked List ,Polynomial representation using Linked List ;Doubly Linked List; Circular Linked List ;Memory allocation- First-fit, Best-fit, and Worst-fit allocation schemes ;Garbage collection and compaction",
+        "Trees :-Representation Of Trees; Binary Trees- Types and Properties, Binary Tree Representation ,Tree Operations ,Tree Traversals ;Expression Trees ;Binary Search Trees-Binary Search Tree Operations ;Binary Heaps-Binary Heap Operations ,Priority Queue. Graphs :-Definitions ;Representation of Graphs ;Depth First Search and Breadth First Search; Applications of Graphs- Single Source All Destination.",
+        "Sorting Techniques :- Selection Sort, Insertion Sort ,Quick Sort, Merge Sort ,Heap Sort ,Radix Sort.Searching Techniques :-Linear Search ,Binary Search ,Hashing-Hashing functions : Mid square, Division, Folding, Digit Analysis; Collision Resolution : Linear probing ,Quadratic Probing ,Double hashing ,Open hashing."
+      ],
+      "object-oriented-programming": [
+        "Structure of a simple java program; Java programming Environment and Runtime Environment(Command Line & IDE);Java compiler; Java Virtual Machine; Primitive Data types and Wrapper Types; Casting and Autoboxing; Arrays; Strings; Vector class; Operators-Arithmetic, Bitwise ,Relational, Boolean Logical, Assignment, Conditional(Ternary);Operator Precedence; Control Statements-Selection Statements, Iteration Statements and Jump Statements; Functions; Command Line Arguments; Variable Length Arguments; Classes; Abstract Classes; Interfaces. [Use proper naming conventions] OOP Concepts: Data abstraction, encapsulation, inheritance, polymorphism, Procedural and object oriented programming paradigm; Microservices. Object Oriented Programming  in Java:Declaring Objects; Object Reference; Introduction to Methods ;Constructors; Access Modifiers; *this* keyword.",
+        "Polymorphism:Method Overloading, Using Objects as Parameters, Returning Objects, Recursion. Static Members ,Final Variables, Inner Classes, Inheritance-Super Class, Sub Class, Types of Inheritance, The super keyword, protected Members ,Calling Order of Constructors, Method Overriding, Dynamic Method Dispatch, Using final with Inheritance.",
+        "Packages-Defining a Package, CLASS PATH, Access Protection, Importing Packages. Interfaces-Interfaces v/s Abstract classes, defining an interface, implementing interfaces, accessing implementations through interface references, extending interface(s). Exception Handling- Checked Exceptions, Unchecked Exceptions, *try* Block and *catch* Clause ,Multiple catch Clauses, Nested try Statements ,throw, throws and finally, Java Built- in Exceptions, Custom Exceptions.Introduction to design patterns in Java :Singleton and Adaptor.",
+        "SOLID Principles in Java(https://www.javatpoint.com/solid-principles java)Swings fundamentals–Overview of AWT ,Swing v/s AWT ,Swing Key Features ,Model View Controller(MVC),Swing Controls, Components and Containers, Swing Packages, Event Handling in Swings, Swing Layout Managers, Exploring Swings–J Frame, J Label, The Swing Buttons, J Text Field. Event handling –Event Handling Mechanisms, Delegation Event Model, Event Classes, Sources of Events, Event Listener Interfaces, Using the Delegation Event Model. Developing Data base Applications using JDBC–JDBC overview, Types Steps, Common JDBC Components, Connection Establishment, SQL Fundamentals [For projects only]- Creating and Executing basic SQL Queries, Working with Result Set, Performing CRUD Operations with JDBC."
+      ]
+    };
     let globalProgress = JSON.parse(localStorage.getItem("globalProgress")) || {};
-    globalProgress[subject] = Array(syllabus[subject].length).fill(false);
+    globalProgress[subject] = Array(syllabusData[subject].length).fill(false);
     localStorage.setItem("globalProgress", JSON.stringify(globalProgress));
     loadTopics();
   }
@@ -214,6 +252,10 @@
         }
       });
     }
+  }
+
+  function saveProgress() {
+    alert("Progress saved successfully!");
   }
 
   function logout() {
