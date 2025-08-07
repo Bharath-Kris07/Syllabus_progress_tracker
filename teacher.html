@@ -214,6 +214,37 @@
       background: #dc3545;
       color: white;
     }
+
+    .completion-target {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+
+    .target-input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .target-input-group input {
+      width: 80px;
+      padding: 8px 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .target-input-group span {
+      font-size: 18px;
+      font-weight: bold;
+      color: #667eea;
+    }
   </style>
 </head>
 <body>
@@ -228,6 +259,14 @@
     <option value="data-structures">DATA STRUCTURES AND ALGORITHMS</option>
     <option value="object-oriented-programming">OBJECT ORIENTED PROGRAMMING</option>
   </select>
+
+  <div class="completion-target">
+    <label for="completionTarget">Set Required Completion Percentage for Students:</label>
+    <div class="target-input-group">
+      <input type="number" id="completionTarget" min="0" max="100" value="70" onchange="saveCompletionTarget()">
+      <span>%</span>
+    </div>
+  </div>
 
   <div id="topicList"></div>
 
@@ -496,6 +535,29 @@
 
   // Init
   window.onload = loadTopics;
+
+  function saveCompletionTarget() {
+    const subject = document.getElementById("subject").value;
+    const target = document.getElementById("completionTarget").value;
+    
+    let completionTargets = JSON.parse(localStorage.getItem("completionTargets")) || {};
+    completionTargets[subject] = parseInt(target);
+    localStorage.setItem("completionTargets", JSON.stringify(completionTargets));
+  }
+
+  function loadCompletionTarget() {
+    const subject = document.getElementById("subject").value;
+    const completionTargets = JSON.parse(localStorage.getItem("completionTargets")) || {};
+    const target = completionTargets[subject] || 70;
+    document.getElementById("completionTarget").value = target;
+  }
+
+  // Update loadTopics to also load completion target
+  const originalLoadTopics = loadTopics;
+  loadTopics = function() {
+    originalLoadTopics();
+    loadCompletionTarget();
+  };
 </script>
 
 </body>

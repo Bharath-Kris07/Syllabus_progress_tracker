@@ -214,6 +214,56 @@
       color: #666;
       font-style: italic;
     }
+
+    .warning-message {
+      margin: 20px 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+      border: 2px solid #ffc107;
+      border-radius: 12px;
+      animation: pulse 2s infinite;
+    }
+
+    .warning-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .warning-icon {
+      font-size: 24px;
+      animation: bounce 1s infinite;
+    }
+
+    .warning-text {
+      flex: 1;
+    }
+
+    .warning-text strong {
+      color: #856404;
+      font-size: 18px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .warning-text p {
+      color: #856404;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
   </style>
 </head>
 <body>
@@ -454,6 +504,35 @@
   // Block access if not student
   if (localStorage.getItem("userRole") !== "student") {
     window.location.href = "index.html";
+  }
+
+  function checkCompletionWarning(completed, total) {
+    const subject = document.getElementById("subject").value;
+    const completionTargets = JSON.parse(localStorage.getItem("completionTargets")) || {};
+    const requiredPercentage = completionTargets[subject] || 70;
+    
+    const currentPercentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const warningMessage = document.getElementById("warningMessage");
+    const warningText = document.getElementById("warningText");
+    
+    if (total > 0 && currentPercentage < requiredPercentage) {
+      const deficit = requiredPercentage - currentPercentage;
+      const subjectNames = {
+        "mathematics": "Mathematics for Computer and Information Science-3",
+        "theory-of-computation": "Theory of Computation",
+        "data-structures": "Data Structures and Algorithms",
+        "object-oriented-programming": "Object Oriented Programming"
+      };
+      
+      warningText.innerHTML = `
+        You are currently at <strong>${currentPercentage}%</strong> completion in <strong>${subjectNames[subject]}</strong>.<br>
+        Your teacher requires <strong>${requiredPercentage}%</strong> completion.<br>
+        You need to complete <strong>${deficit}%</strong> more to meet the requirement.
+      `;
+      warningMessage.style.display = "block";
+    } else {
+      warningMessage.style.display = "none";
+    }
   }
 
   window.onload = loadTopics;
