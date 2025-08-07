@@ -21,7 +21,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: auto;
       background: white;
       padding: 30px;
@@ -67,39 +67,58 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      cursor: pointer;
     }
 
-    .module-toggle {
+    .module-progress {
       background: rgba(255,255,255,0.2);
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 4px 12px;
+      border-radius: 15px;
       font-size: 14px;
-      border: none;
-      color: white;
-      cursor: pointer;
+    }
+
+    .subtopics {
+      padding: 20px;
+    }
+
+    .subtopic {
+      margin: 12px 0;
+      display: flex;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid #e9ecef;
       transition: all 0.3s ease;
     }
 
-    .module-toggle:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    .module-content {
-      padding: 20px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #555;
-      border-top: 1px solid #e9ecef;
-    }
-
-    .module.enabled {
+    .subtopic:hover {
+      background: #f0f8ff;
       border-color: #28a745;
-      background: #f8fff8;
+      transform: translateX(5px);
     }
 
-    .module.enabled .module-header {
-      background: linear-gradient(135deg, #28a745, #20c997);
+    .subtopic input {
+      margin-right: 12px;
+      margin-top: 5px;
+      transform: scale(1.3);
+      cursor: pointer;
+    }
+
+    .subtopic label {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #555;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .subtopic.enabled {
+      background: #e8f5e8;
+      border-color: #28a745;
+    }
+
+    .subtopic.enabled label {
+      color: #155724;
     }
 
     .buttons {
@@ -171,12 +190,29 @@
       color: #28a745;
     }
 
-    .progress-card.disabled {
-      border-left-color: #6c757d;
+    .module-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
     }
 
-    .progress-card.disabled .status {
-      color: #6c757d;
+    .module-btn {
+      padding: 8px 16px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .enable-all {
+      background: #28a745;
+      color: white;
+    }
+
+    .disable-all {
+      background: #dc3545;
+      color: white;
     }
   </style>
 </head>
@@ -244,47 +280,85 @@
     const topicList = document.getElementById("topicList");
     topicList.innerHTML = "";
 
-    // Load or initialize global progress
-    let globalProgress = JSON.parse(localStorage.getItem("globalProgress")) || {};
-    if (!globalProgress[subject]) {
-      globalProgress[subject] = Array(modules.length).fill(false);
+    // Load or initialize teacher progress
+    let teacherProgress = JSON.parse(localStorage.getItem("teacherProgress")) || {};
+    if (!teacherProgress[subject]) {
+      teacherProgress[subject] = {};
     }
 
     let moduleData = [];
 
     modules.forEach((moduleContent, moduleIndex) => {
-      const isEnabled = globalProgress[subject][moduleIndex];
+      const subtopics = moduleContent.split(',').map(s => s.trim());
       
+      // Initialize subtopic progress if not exists
+      if (!teacherProgress[subject][moduleIndex]) {
+        teacherProgress[subject][moduleIndex] = Array(subtopics.length).fill(false);
+      }
+
+      let enabledSubtopics = 0;
+      subtopics.forEach((_, subtopicIndex) => {
+        if (teacherProgress[subject][moduleIndex][subtopicIndex]) {
+          enabledSubtopics++;
+        }
+      });
+
       const moduleDiv = document.createElement("div");
-      moduleDiv.className = `module ${isEnabled ? 'enabled' : ''}`;
+      moduleDiv.className = "module";
 
       const headerDiv = document.createElement("div");
       headerDiv.className = "module-header";
-      
-      const toggleButton = document.createElement("button");
-      toggleButton.className = "module-toggle";
-      toggleButton.textContent = isEnabled ? "Enabled" : "Disabled";
-      toggleButton.onclick = (e) => {
-        e.stopPropagation();
-        globalProgress[subject][moduleIndex] = !globalProgress[subject][moduleIndex];
-        localStorage.setItem("globalProgress", JSON.stringify(globalProgress));
-        loadTopics();
-      };
+      headerDiv.innerHTML = `
+        <span>Module ${moduleIndex + 1}</span>
+        <span class="module-progress">${enabledSubtopics}/${subtopics.length} enabled</span>
+      `;
 
-      headerDiv.innerHTML = `<span>Module ${moduleIndex + 1}</span>`;
-      headerDiv.appendChild(toggleButton);
+      const controlsDiv = document.createElement("div");
+      controlsDiv.className = "module-controls";
+      controlsDiv.innerHTML = `
+        <button class="module-btn enable-all" onclick="toggleAllSubtopics('${subject}', ${moduleIndex}, true)">Enable All</button>
+        <button class="module-btn disable-all" onclick="toggleAllSubtopics('${subject}', ${moduleIndex}, false)">Disable All</button>
+      `;
 
-      const contentDiv = document.createElement("div");
-      contentDiv.className = "module-content";
-      contentDiv.textContent = moduleContent;
+      const subtopicsDiv = document.createElement("div");
+      subtopicsDiv.className = "subtopics";
+
+      subtopics.forEach((subtopic, subtopicIndex) => {
+        const isEnabled = teacherProgress[subject][moduleIndex][subtopicIndex];
+
+        const subtopicDiv = document.createElement("div");
+        subtopicDiv.className = `subtopic ${isEnabled ? 'enabled' : ''}`;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = isEnabled;
+        checkbox.onchange = () => {
+          teacherProgress[subject][moduleIndex][subtopicIndex] = checkbox.checked;
+          localStorage.setItem("teacherProgress", JSON.stringify(teacherProgress));
+          loadTopics(); // refresh to update progress
+        };
+
+        const label = document.createElement("label");
+        label.textContent = subtopic;
+        label.onclick = () => {
+          checkbox.checked = !checkbox.checked;
+          checkbox.onchange();
+        };
+
+        subtopicDiv.appendChild(checkbox);
+        subtopicDiv.appendChild(label);
+        subtopicsDiv.appendChild(subtopicDiv);
+      });
 
       moduleDiv.appendChild(headerDiv);
-      moduleDiv.appendChild(contentDiv);
+      moduleDiv.appendChild(controlsDiv);
+      moduleDiv.appendChild(subtopicsDiv);
       topicList.appendChild(moduleDiv);
 
       moduleData.push({
         name: `Module ${moduleIndex + 1}`,
-        enabled: isEnabled
+        enabled: enabledSubtopics,
+        total: subtopics.length
       });
     });
 
@@ -292,12 +366,27 @@
     updateProgressSummary(moduleData);
   }
 
+  function toggleAllSubtopics(subject, moduleIndex, enable) {
+    let teacherProgress = JSON.parse(localStorage.getItem("teacherProgress")) || {};
+    if (!teacherProgress[subject]) teacherProgress[subject] = {};
+    if (!teacherProgress[subject][moduleIndex]) {
+      const modules = syllabus[subject];
+      const subtopics = modules[moduleIndex].split(',');
+      teacherProgress[subject][moduleIndex] = Array(subtopics.length).fill(false);
+    }
+    
+    teacherProgress[subject][moduleIndex] = teacherProgress[subject][moduleIndex].map(() => enable);
+    localStorage.setItem("teacherProgress", JSON.stringify(teacherProgress));
+    loadTopics();
+  }
+
   function resetProgress() {
     const subject = document.getElementById("subject").value;
-    const modules = syllabus[subject];
-    let globalProgress = JSON.parse(localStorage.getItem("globalProgress")) || {};
-    globalProgress[subject] = Array(modules.length).fill(false);
-    localStorage.setItem("globalProgress", JSON.stringify(globalProgress));
+    let teacherProgress = JSON.parse(localStorage.getItem("teacherProgress")) || {};
+    if (teacherProgress[subject]) {
+      delete teacherProgress[subject];
+      localStorage.setItem("teacherProgress", JSON.stringify(teacherProgress));
+    }
     loadTopics();
   }
 
@@ -307,24 +396,26 @@
 
     moduleData.forEach(module => {
       const card = document.createElement("div");
-      card.className = `progress-card ${module.enabled ? '' : 'disabled'}`;
+      card.className = "progress-card";
       card.innerHTML = `
         <h4>${module.name}</h4>
-        <div class="status">${module.enabled ? 'Enabled' : 'Disabled'}</div>
+        <div class="status">${module.enabled}/${module.total}</div>
+        <div>Enabled</div>
       `;
       summaryDiv.appendChild(card);
     });
   }
 
   function updateChart(moduleData) {
-    const enabledCount = moduleData.filter(m => m.enabled).length;
-    const disabledCount = moduleData.length - enabledCount;
+    const labels = moduleData.map(m => m.name);
+    const data = moduleData.map(m => m.enabled);
+    const colors = ['#28a745', '#20c997', '#17a2b8', '#6f42c1'];
 
     const chartData = {
-      labels: ["Enabled Modules", "Disabled Modules"],
+      labels: labels,
       datasets: [{
-        data: [enabledCount, disabledCount],
-        backgroundColor: ["#28a745", "#6c757d"],
+        data: data,
+        backgroundColor: colors,
         borderWidth: 2,
         borderColor: '#fff'
       }]
@@ -353,7 +444,8 @@
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  return `${context.label}: ${context.parsed}`;
+                  const module = moduleData[context.dataIndex];
+                  return `${context.label}: ${module.enabled}/${module.total} enabled`;
                 }
               }
             }

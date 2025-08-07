@@ -22,7 +22,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: auto;
       background: white;
       padding: 30px;
@@ -162,6 +162,7 @@
       padding: 20px;
       background: #f8f9fa;
       border-radius: 12px;
+      text-align: center;
     }
 
     .progress-summary {
@@ -190,6 +191,29 @@
       font-weight: bold;
       color: #667eea;
     }
+
+    .overall-progress {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .overall-progress h3 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .overall-percentage {
+      font-size: 36px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .no-topics {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -208,7 +232,10 @@
   <div id="topicList"></div>
 
   <div class="chart-container">
-    <div class="progress-summary" id="progressSummary"></div>
+    <div class="overall-progress">
+      <h3>Overall Progress</h3>
+      <div class="overall-percentage" id="overallPercentage">0%</div>
+    </div>
     <canvas id="studentChart" width="400" height="400"></canvas>
   </div>
 
@@ -260,40 +287,59 @@
     const topicList = document.getElementById("topicList");
     topicList.innerHTML = "";
 
-    const globalProgress = JSON.parse(localStorage.getItem("globalProgress")) || {};
-    const availableModules = globalProgress[subject] || Array(modules.length).fill(false);
+    // Get teacher's enabled subtopics
+    const teacherProgress = JSON.parse(localStorage.getItem("teacherProgress")) || {};
+    const enabledSubtopics = teacherProgress[subject] || {};
 
-    let moduleData = [];
+    let totalEnabledSubtopics = 0;
+    let totalCompletedSubtopics = 0;
+    let hasAnyEnabledTopics = false;
 
     modules.forEach((moduleContent, moduleIndex) => {
-      if (!availableModules[moduleIndex]) return; // module not covered by teacher
-
       const subtopics = moduleContent.split(',').map(s => s.trim());
+      const moduleEnabledSubtopics = enabledSubtopics[moduleIndex] || Array(subtopics.length).fill(false);
       
+      // Check if this module has any enabled subtopics
+      const hasEnabledSubtopics = moduleEnabledSubtopics.some(enabled => enabled);
+      if (!hasEnabledSubtopics) return; // Skip this module if no subtopics are enabled
+
+      hasAnyEnabledTopics = true;
+
       const moduleDiv = document.createElement("div");
       moduleDiv.className = "module";
 
       let completedSubtopics = 0;
+      let enabledCount = 0;
+
+      // Count enabled and completed subtopics for this module
       subtopics.forEach((_, subtopicIndex) => {
-        const studentKey = `student_${subject}_${moduleIndex}_${subtopicIndex}`;
-        if (localStorage.getItem(studentKey) === "true") {
-          completedSubtopics++;
+        if (moduleEnabledSubtopics[subtopicIndex]) {
+          enabledCount++;
+          totalEnabledSubtopics++;
+          const studentKey = `student_${subject}_${moduleIndex}_${subtopicIndex}`;
+          if (localStorage.getItem(studentKey) === "true") {
+            completedSubtopics++;
+            totalCompletedSubtopics++;
+          }
         }
       });
 
-      const progressPercent = Math.round((completedSubtopics / subtopics.length) * 100);
+      const progressPercent = enabledCount > 0 ? Math.round((completedSubtopics / enabledCount) * 100) : 0;
 
       const headerDiv = document.createElement("div");
       headerDiv.className = "module-header";
       headerDiv.innerHTML = `
         <span>Module ${moduleIndex + 1}</span>
-        <span class="module-progress">${completedSubtopics}/${subtopics.length} (${progressPercent}%)</span>
+        <span class="module-progress">${completedSubtopics}/${enabledCount} (${progressPercent}%)</span>
       `;
 
       const subtopicsDiv = document.createElement("div");
       subtopicsDiv.className = "subtopics";
 
       subtopics.forEach((subtopic, subtopicIndex) => {
+        // Only show enabled subtopics
+        if (!moduleEnabledSubtopics[subtopicIndex]) return;
+
         const studentKey = `student_${subject}_${moduleIndex}_${subtopicIndex}`;
         const isCompleted = localStorage.getItem(studentKey) === "true";
 
@@ -323,17 +369,16 @@
       moduleDiv.appendChild(headerDiv);
       moduleDiv.appendChild(subtopicsDiv);
       topicList.appendChild(moduleDiv);
-
-      moduleData.push({
-        name: `Module ${moduleIndex + 1}`,
-        completed: completedSubtopics,
-        total: subtopics.length,
-        percentage: progressPercent
-      });
     });
 
-    updateChart(moduleData);
-    updateProgressSummary(moduleData);
+    if (!hasAnyEnabledTopics) {
+      const noTopicsDiv = document.createElement("div");
+      noTopicsDiv.className = "no-topics";
+      noTopicsDiv.innerHTML = "No topics have been enabled by your teacher yet. Please check back later.";
+      topicList.appendChild(noTopicsDiv);
+    }
+
+    updateChart(totalCompletedSubtopics, totalEnabledSubtopics);
   }
 
   function resetMyProgress() {
@@ -349,32 +394,18 @@
     loadTopics();
   }
 
-  function updateProgressSummary(moduleData) {
-    const summaryDiv = document.getElementById("progressSummary");
-    summaryDiv.innerHTML = "";
-
-    moduleData.forEach(module => {
-      const card = document.createElement("div");
-      card.className = "progress-card";
-      card.innerHTML = `
-        <h4>${module.name}</h4>
-        <div class="percentage">${module.percentage}%</div>
-        <div>${module.completed}/${module.total} completed</div>
-      `;
-      summaryDiv.appendChild(card);
-    });
-  }
-
-  function updateChart(moduleData) {
-    const labels = moduleData.map(m => m.name);
-    const data = moduleData.map(m => m.percentage);
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c'];
+  function updateChart(completed, total) {
+    const incomplete = total - completed;
+    const overallPercent = total > 0 ? Math.round((completed / total) * 100) : 0;
+    
+    // Update overall percentage display
+    document.getElementById("overallPercentage").textContent = `${overallPercent}%`;
 
     const chartData = {
-      labels: labels,
+      labels: ["Completed", "Incomplete"],
       datasets: [{
-        data: data,
-        backgroundColor: colors.slice(0, moduleData.length),
+        data: [completed, incomplete],
+        backgroundColor: ["#28a745", "#e9ecef"],
         borderWidth: 2,
         borderColor: '#fff'
       }]
@@ -403,8 +434,8 @@
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  const module = moduleData[context.dataIndex];
-                  return `${context.label}: ${module.completed}/${module.total} (${context.parsed}%)`;
+                  const percentage = total > 0 ? Math.round((context.parsed / total) * 100) : 0;
+                  return `${context.label}: ${context.parsed} (${percentage}%)`;
                 }
               }
             }
