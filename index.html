@@ -113,15 +113,18 @@
     return;
   }
 
+  console.log('Login attempt:', { role, user, pass }); // Debug log
+
   if (
     (role === 'student' && user === 'student' && pass === '1234') ||
     (role === 'teacher' && user === 'teacher' && pass === '5678')
   ) {
     localStorage.setItem('userRole', role);
-    // Use window.location.replace for better navigation
+    console.log('Login successful, redirecting to:', role); // Debug log
     const targetPage = role === 'student' ? 'student.html' : 'teacher.html';
-    window.location.replace(targetPage);
+    window.location.href = targetPage;
   } else {
+    console.log('Login failed for:', { role, user, pass }); // Debug log
     err.textContent = 'Invalid username or password.';
   }
 });
