@@ -552,7 +552,7 @@
     document.getElementById("completionTarget").value = target;
   }
 
-  // Update loadTopics to also load completion target
+  // Update the original loadTopics function to also load completion target
   const originalLoadTopics = loadTopics;
   loadTopics = function() {
     originalLoadTopics();
