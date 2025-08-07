@@ -407,9 +407,30 @@
   }
 
   function updateChart(moduleData) {
-    const labels = moduleData.map(m => m.name);
-    const data = moduleData.map(m => m.enabled);
-    const colors = ['#28a745', '#20c997', '#17a2b8', '#6f42c1'];
+    const labels = [];
+    const data = [];
+    const colors = [];
+    
+    // Define colors for each module (completed and incomplete)
+    const moduleColors = {
+      completed: ['#28a745', '#20c997', '#17a2b8', '#6f42c1'],
+      incomplete: ['#dc3545', '#fd7e14', '#ffc107', '#6c757d']
+    };
+    
+    moduleData.forEach((module, index) => {
+      if (module.enabled > 0) {
+        labels.push(`${module.name} (Enabled)`);
+        data.push(module.enabled);
+        colors.push(moduleColors.completed[index % moduleColors.completed.length]);
+      }
+      
+      const incomplete = module.total - module.enabled;
+      if (incomplete > 0) {
+        labels.push(`${module.name} (Disabled)`);
+        data.push(incomplete);
+        colors.push(moduleColors.incomplete[index % moduleColors.incomplete.length]);
+      }
+    });
 
     const chartData = {
       labels: labels,
@@ -444,8 +465,11 @@
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  const module = moduleData[context.dataIndex];
-                  return `${context.label}: ${module.enabled}/${module.total} enabled`;
+                  const label = context.label;
+                  const value = context.parsed;
+                  const total = data.reduce((sum, val) => sum + val, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${label}: ${value} topics (${percentage}%)`;
                 }
               }
             }
